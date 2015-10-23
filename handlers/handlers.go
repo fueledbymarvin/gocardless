@@ -4,6 +4,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fueledbymarvin/gocardless/crawler"
 	"github.com/fueledbymarvin/gocardless/logs"
 	"net/http"
 	"net/http/httptest"
@@ -76,6 +77,23 @@ func JSON(rw http.ResponseWriter, response interface{}) {
 // GET /crawl
 // Crawls a given url
 func Crawl(rw http.ResponseWriter, req *http.Request) {
+	uStr := req.Form.Get("url")
+	if uStr == "" {
+		http.Error(rw, "Missing url parameter", 422)
+		return
+	}
+	
+	u, err := crawler.Parse(uStr)
+	if logs.CheckErr(err) {
+		http.Error(rw, err.Error(), 422)
+		return
+	}
 
-	JSON(rw, map[string]interface{}{"sitemap": "placeholder"})
+	sitemap, err := crawler.Crawl(u)
+	if logs.CheckErr(err) {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	JSON(rw, map[string]interface{}{"sitemap": sitemap})
 }
