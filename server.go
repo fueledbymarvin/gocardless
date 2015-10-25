@@ -2,8 +2,8 @@
 package main
 
 import (
-	"github.com/fueledbymarvin/gocardless/logs"
 	"github.com/fueledbymarvin/gocardless/handlers"
+	"github.com/fueledbymarvin/gocardless/logs"
 	"net/http"
 )
 

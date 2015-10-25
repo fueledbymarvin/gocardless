@@ -2,10 +2,10 @@
 package logs
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
-	"fmt"
 )
 
 var logger *log.Logger

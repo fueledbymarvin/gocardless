@@ -82,7 +82,7 @@ func Crawl(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, "Missing url parameter", 422)
 		return
 	}
-	
+
 	u, err := crawler.Parse(uStr)
 	if logs.CheckErr(err) {
 		http.Error(rw, err.Error(), 422)
@@ -95,5 +95,5 @@ func Crawl(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	JSON(rw, map[string]interface{}{"sitemap": sitemap})
+	JSON(rw, sitemap)
 }
