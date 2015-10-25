@@ -10,8 +10,6 @@ import (
 	"net/http/httptest"
 )
 
-const frontendOrigin string = "http://localhost:9000"
-
 // BeforeAction logs request and response data and times the handler
 // h's execution.
 func BeforeAction(h func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
@@ -32,16 +30,8 @@ func BeforeAction(h func(http.ResponseWriter, *http.Request)) func(http.Response
 		rec := httptest.NewRecorder()
 		// set content-type
 		rec.Header().Set("Content-Type", "application/json")
-		// allow CORS
-		rec.Header().Set("Access-Control-Allow-Origin", frontendOrigin)
-		// respond to preflight requests
-		if req.Method == "OPTIONS" {
-			rec.Header().Set("Access-Control-Allow-Methods", "GET, POST")
-			rec.Header().Set("Access-Control-Allow-Headers", "accept, content-type")
-		} else {
-			// call actual handler with a recorder
-			h(rec, req)
-		}
+		
+		h(rec, req)
 
 		// log response
 		logs.Log(fmt.Sprintf("Response status: %d", rec.Code))
@@ -94,6 +84,7 @@ func Crawl(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	logs.Log(fmt.Sprintf("Crawled %d urls", len(sitemap.Nodes)))
 
 	JSON(rw, sitemap)
 }

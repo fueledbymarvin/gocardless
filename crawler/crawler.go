@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"fmt"
+	"runtime"
 )
 
 type Sitemap struct {
@@ -18,6 +19,11 @@ type Sitemap struct {
 type Node struct {
 	URL       *url.URL
 	Neighbors map[string]bool
+}
+
+type result struct {
+	URL   *url.URL
+	Links []*url.URL
 }
 
 func Parse(uStr string) (*url.URL, error) {
@@ -57,27 +63,52 @@ func Crawl(u *url.URL) (*Sitemap, error) {
 	sitemap := &Sitemap{Host: u.Host, Nodes: make(map[string]*Node)}
 	sitemap.Nodes[u.String()] = &Node{URL: u, Neighbors: make(map[string]bool)}
 
-	urls := make([]*url.URL, 0)
-	urls = append(urls, u)
-	for len(urls) > 0 {
-		fmt.Println(len(urls))
-		var toCrawl *url.URL
-		toCrawl, urls = urls[0], urls[1:len(urls)]
-		links := getLinks(toCrawl)
-		fmt.Println(toCrawl)
-		newLinks := sitemap.update(toCrawl, links)
-		urls = append(urls, newLinks...)
+	// create incoming and outgoing channels for workers
+	urls := make(chan *url.URL, 1000)
+	results := make(chan *result, 100)
+
+	// create worker pool
+	nWorkers := runtime.NumCPU()
+	runtime.GOMAXPROCS(nWorkers)
+	fmt.Println(nWorkers)
+	for i := 0; i < nWorkers; i++ {
+		go worker(urls, results)
+	}
+
+	// add initial url and track outstanding jobs to know when to terminate
+	urls <- u
+	outstanding := 1
+
+	for {
+		res := <-results
+		newLinks := sitemap.update(res)
+		outstanding += len(newLinks) - 1
+		for _, link := range newLinks {
+			urls <- link
+		}
+		
+		if outstanding == 0 {
+			close(urls)
+			break
+		}
 	}
 
 	return sitemap, nil
 }
 
-func (this *Sitemap) update(u *url.URL, links []*url.URL) []*url.URL {
+func worker(urls <-chan *url.URL, results chan<- *result) {
+
+	for u := range urls {
+		results <- &result{URL: u, Links: getLinks(u)}
+	}
+}
+
+func (this *Sitemap) update(res *result) []*url.URL {
 
 	// Only return unseen links with the given Host
-	node := this.Nodes[u.String()]
-	newLinks := make([]*url.URL, 0)
-	for _, link := range links {
+	node := this.Nodes[res.URL.String()]
+	newLinks := make([]*url.URL, 0, len(res.Links))
+	for _, link := range res.Links {
 		var linkedNode *Node
 		var seen bool
 		if linkedNode, seen = this.Nodes[link.String()]; !seen {
