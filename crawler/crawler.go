@@ -11,6 +11,8 @@ import (
 	"runtime"
 )
 
+const chunkSize int = 100
+
 type Sitemap struct {
 	Host  string
 	Nodes map[string]*Node
@@ -70,7 +72,6 @@ func Crawl(u *url.URL) (*Sitemap, error) {
 	// create worker pool
 	nWorkers := runtime.NumCPU()
 	runtime.GOMAXPROCS(nWorkers)
-	fmt.Println(nWorkers)
 	for i := 0; i < nWorkers; i++ {
 		go worker(urls, results)
 	}
@@ -79,7 +80,7 @@ func Crawl(u *url.URL) (*Sitemap, error) {
 	urls <- u
 	outstanding := 1
 
-	for {
+	for count := 1; ; count++ {
 		res := <-results
 		newLinks := sitemap.update(res)
 		outstanding += len(newLinks) - 1
@@ -89,7 +90,13 @@ func Crawl(u *url.URL) (*Sitemap, error) {
 		
 		if outstanding == 0 {
 			close(urls)
+			logs.Log(fmt.Sprintf("Crawled %d urls total", count))
 			break
+		}
+
+		if count % chunkSize == 0 {
+			logs.Log(fmt.Sprintf("Crawled %d urls so far", count))
+			logs.Log(fmt.Sprintf("%d urls pending", outstanding))
 		}
 	}
 

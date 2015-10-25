@@ -84,7 +84,6 @@ func Crawl(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	logs.Log(fmt.Sprintf("Crawled %d urls", len(sitemap.Nodes)))
 
 	JSON(rw, sitemap)
 }
