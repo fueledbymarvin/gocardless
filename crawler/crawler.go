@@ -41,6 +41,14 @@ func ensureCanonical(u *url.URL) bool {
 	// consider https as http to reduce redundancy
 	u.Scheme = "http"
 
+	// remove trailing slash to reduce redundancy
+	if len(u.Path) != 0 && u.Path[len(u.Path)-1] == '/' {
+		u.Path = u.Path[:len(u.Path)-1]
+	}
+
+	// clear fragment to reduce redundancy
+	u.Fragment = ""
+
 	return true
 }
 
