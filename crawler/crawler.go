@@ -60,7 +60,7 @@ func ensureCanonical(u *url.URL) bool {
 	return true
 }
 
-func Crawl(u *url.URL) (*Sitemap, error) {
+func Crawl(u *url.URL) (map[string]interface{}, error) {
 
 	sitemap := &Sitemap{Host: u.Host, Nodes: make(map[string]*Node)}
 	sitemap.Nodes[u.String()] = &Node{URL: u, Neighbors: make(map[string]bool)}
@@ -100,7 +100,7 @@ func Crawl(u *url.URL) (*Sitemap, error) {
 		}
 	}
 
-	return sitemap, nil
+	return sitemap.toGraph(), nil
 }
 
 func worker(urls <-chan *url.URL, results chan<- *result) {
@@ -184,3 +184,38 @@ func contains(s []string, str string) bool {
 	}
 	return false
 }
+
+// Convert a sitemap to a graph that is a list of nodes and a list of links.
+// Links are specified using the indices of the nodes list.
+func (this *Sitemap) toGraph() map[string]interface{} {
+	
+	nodes := make([](map[string]interface{}), 0, len(this.Nodes))
+	nodeMap := make(map[string]int)
+	nLinks := 0
+	for u, node := range this.Nodes {
+		nodeMap[u] = len(nodes)
+		nLinks += len(node.Neighbors)
+
+		n := make(map[string]interface{})
+		n["url"] = u
+		n["offsite"] = node.URL.Host != this.Host
+		nodes = append(nodes, n)
+	}
+
+	links := make([](map[string]interface{}), 0, nLinks)
+	for u, node := range this.Nodes {
+		for link, _ := range node.Neighbors {
+			l := make(map[string]interface{})
+			l["source"] = nodeMap[u]
+			l["target"] = nodeMap[link]
+			links = append(links, l)
+		}
+	}
+
+	res := make(map[string]interface{})
+	res["nodes"] = nodes
+	res["links"] = links
+
+	return res
+}
+

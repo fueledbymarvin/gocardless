@@ -71,3 +71,13 @@
     from { -webkit-transform: rotate(0deg); }
     to { -webkit-transform: rotate(360deg); }
 }
+
+.node {
+    fill: #498;
+    color: #333;
+}
+
+.link {
+    stroke: #999;
+    stroke-opacity: .6;
+}
