@@ -12,7 +12,7 @@ import (
 
 // BeforeAction logs request and response data and times the handler
 // h's execution.
-func BeforeAction(h func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func BeforeAction(h func(http.ResponseWriter, *http.Request), contentType string) func(http.ResponseWriter, *http.Request) {
 	return func(rw http.ResponseWriter, req *http.Request) {
 		defer logs.TimerEnd(logs.TimerBegin(fmt.Sprintf("%s '%s'", req.Method, req.URL.Path)))
 
@@ -29,7 +29,9 @@ func BeforeAction(h func(http.ResponseWriter, *http.Request)) func(http.Response
 		// new recorder for logging/middleware
 		rec := httptest.NewRecorder()
 		// set content-type
-		rec.Header().Set("Content-Type", "application/json")
+		if contentType != "" {
+			rec.Header().Set("Content-Type", contentType)
+		}
 		
 		h(rec, req)
 
@@ -86,4 +88,15 @@ func Crawl(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	JSON(rw, sitemap)
+}
+
+func Index(rw http.ResponseWriter, req *http.Request) {
+
+	http.ServeFile(rw, req, "assets/views/index.html")
+}
+
+func Assets(rw http.ResponseWriter, req *http.Request) {
+
+	http.ServeFile(rw, req,
+		fmt.Sprintf("assets/%s/%s", req.Form.Get("type"), req.Form.Get("file")))
 }

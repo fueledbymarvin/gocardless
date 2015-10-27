@@ -1,0 +1,73 @@
+#hero {
+    font-size: 12px;
+    font-family: "Montserrat", sans-serif;
+    padding: 12em 8em 16em;
+    background: url("https://gocardless.com/images/hero/new-home-hero.jpg") 50% 50% no-repeat #498EE0;
+    background-size: cover;
+    text-align: center;
+    color: white;
+}
+
+#hero header {
+    margin-bottom: 3em;
+}
+
+#hero p {
+    font-size: 1.5em;
+}
+
+#crawl .form-control {
+    height: auto;
+}
+
+#crawl .btn-primary {
+    color: #498EE0;
+    background-color: white;
+    border: 0.2em solid white;
+    text-transform: uppercase;
+    border-radius: 0.2em;
+    padding: 0.7em;
+}
+
+#crawl #url {
+    color: white;
+    background: none;
+    border: 0.2em solid white;
+    border-radius: 0.2em;
+    padding: 0.7em;
+}
+
+#crawl #url:focus {
+    border-color: white;
+}
+
+#crawl .form-control::-webkit-input-placeholder {
+   color: #ccc;
+}
+
+#crawl .form-control:-moz-placeholder { /* Firefox 18- */
+   color: #ccc;
+}
+
+#crawl .form-control::-moz-placeholder {  /* Firefox 19+ */
+   color: #ccc;
+}
+
+#crawl .form-control:-ms-input-placeholder {  
+   color: #ccc;
+}
+
+.glyphicon.spinning {
+    animation: spin 1s infinite linear;
+    -webkit-animation: spin-webkit 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin-webkit {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
