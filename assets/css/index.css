@@ -5,7 +5,7 @@
     background: url("https://gocardless.com/images/hero/new-home-hero.jpg") 50% 50% no-repeat #498EE0;
     background-size: cover;
     text-align: center;
-    color: white;
+    color: #fff;
 }
 
 #hero header {
@@ -22,39 +22,39 @@
 
 #crawl .btn-primary {
     color: #498EE0;
-    background-color: white;
-    border: 0.2em solid white;
+    background-color: #fff;
+    border: 0.2em solid #fff;
     text-transform: uppercase;
     border-radius: 0.2em;
     padding: 0.7em;
 }
 
 #crawl #url {
-    color: white;
+    color: #fff;
     background: none;
-    border: 0.2em solid white;
+    border: 0.2em solid #fff;
     border-radius: 0.2em;
     padding: 0.7em;
 }
 
 #crawl #url:focus {
-    border-color: white;
+    border-color: #fff;
 }
 
 #crawl .form-control::-webkit-input-placeholder {
-   color: #ccc;
+   color: #ddd;
 }
 
 #crawl .form-control:-moz-placeholder { /* Firefox 18- */
-   color: #ccc;
+   color: #ddd;
 }
 
 #crawl .form-control::-moz-placeholder {  /* Firefox 19+ */
-   color: #ccc;
+   color: #ddd;
 }
 
 #crawl .form-control:-ms-input-placeholder {  
-   color: #ccc;
+   color: #ddd;
 }
 
 .glyphicon.spinning {
@@ -72,12 +72,47 @@
     to { -webkit-transform: rotate(360deg); }
 }
 
-.node {
-    fill: #498;
-    color: #333;
+#sitemap {
+    margin-top: 5em;
+    margin-bottom: 5em;
+    font-family: "Montserrat", sans-serif;
 }
 
-.link {
-    stroke: #999;
-    stroke-opacity: .6;
+#sitemap article {
+    margin-bottom: 3em;
+}
+
+#sitemap header {
+    padding: 1em 1.5em;
+    background: #498EE0;
+    font-size: 2em;
+    border-radius: 0.2em 0.2em 0 0;
+}
+
+#sitemap header.offsite {
+    background: #498;
+}
+
+#sitemap header a {
+    color: #fff;
+}
+
+#sitemap header a:hover {
+    color: #ddd;
+    text-decoration: none;
+}
+
+#sitemap ul {
+    padding: 2em 3em;
+    background: #f1f1f1;
+    border-radius: 0 0 0.2em 0.2em;
+}
+
+#sitemap ul a {
+    color: #498EE0;
+}
+
+#sitemap ul a:hover {
+    color: #2066bc;
+    text-decoration: none;
 }

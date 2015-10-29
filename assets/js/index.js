@@ -1,51 +1,46 @@
 $(document).ready(function() {
 
-    function drawGraph(graph) {
+    function displaySitemap(nodes) {
 
-        var width = 960,
-            height = 500;
+        var $sitemap = $("#sitemap");
+        $sitemap.empty();
 
-        var force = d3.layout.force()
-                .charge(-120)
-                .linkDistance(30)
-                .size([width, height]);
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
 
-        d3.select("svg").remove();
-        var svg = d3.select("section#graph").append("svg")
-                .attr("width", width)
-                .attr("height", height);
+            var $article = $("<article></article>");
 
-        force.nodes(graph.nodes).links(graph.links).start();
+            var $header = $("<header></header>");
+            if (node.offsite) {
+                $header.addClass("offsite");
+            }
+            var $url = $("<a></a>");
+            $url.attr("target", "_blank");
+            $url.attr("href", node.url);
+            $url.text(node.url);
+            $header.append($url);
 
-        var links = svg.selectAll("line")
-                .data(graph.links)
-                .enter()
-                .append("line")
-                .attr("class", "link");
+            var $list = $("<ul></ul>");
+            $list.addClass("list-unstyled");
+            for (var j = 0; j < node.links.length; j++) {
+                var $elem = $("<li></li>");
+                var $link = $("<a></a>");
+                $link.attr("target", "_blank");
+                $link.attr("href", node.links[j]);
+                $link.text(node.links[j]);
 
-        var nodes = svg.selectAll("g")
-                .data(graph.nodes)
-                .enter()
-                .append("g");
+                $elem.append($link);
+                $list.append($elem);
+            }
+            if (node.offsite || node.links.length == 0) {
+                var $elem = $("<li></li>");
+                $elem.text(node.offsite ? "Not within domain so did not crawl." : "No links found.");
+                $list.append($elem);
+            }
+            $article.append($header).append($list);
 
-        nodes.append("circle")
-            .attr("class", "node")
-            .attr("r", 5)
-            .call(force.drag);
-
-        nodes.append("text")
-            .text(function(d) { console.log(d.url); return d.url; });
-
-        force.on("tick", function() {
-            links.attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return d.target.y; });
-
-            nodes.attr("transform", function (d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-        });
+            $sitemap.append($article);
+        }
     }
     
     $(".loading").hide();
@@ -63,8 +58,7 @@ $(document).ready(function() {
 
         $.get("/crawl", {url: url})
             .done(function(data) {
-                console.log(data);
-                drawGraph(data);
+                displaySitemap(data);
             })
             .fail(function(data) {
                 alert("Error (" + data.status + "): " + data.responseText);
