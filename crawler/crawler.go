@@ -61,7 +61,7 @@ func ensureCanonical(u *url.URL) bool {
 	return true
 }
 
-func Crawl(u *url.URL) ([]map[string]interface{}, error) {
+func Crawl(u *url.URL) []map[string]interface{} {
 
 	sitemap := &Sitemap{Host: u.Host, Nodes: make(map[string]*Node), Ordered: make([]string, 0)}
 	sitemap.Nodes[u.String()] = &Node{URL: u, Neighbors: make(map[string]bool)}
@@ -102,7 +102,7 @@ func Crawl(u *url.URL) ([]map[string]interface{}, error) {
 		}
 	}
 
-	return sitemap.simplify(), nil
+	return sitemap.simplify()
 }
 
 func worker(urls <-chan *url.URL, results chan<- *result) {

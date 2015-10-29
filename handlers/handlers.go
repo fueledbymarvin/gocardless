@@ -13,6 +13,7 @@ import (
 // BeforeAction logs request and response data and times the handler
 // h's execution.
 func BeforeAction(h func(http.ResponseWriter, *http.Request), contentType string) func(http.ResponseWriter, *http.Request) {
+
 	return func(rw http.ResponseWriter, req *http.Request) {
 		defer logs.TimerEnd(logs.TimerBegin(fmt.Sprintf("%s '%s'", req.Method, req.URL.Path)))
 
@@ -46,6 +47,7 @@ func BeforeAction(h func(http.ResponseWriter, *http.Request), contentType string
 
 // copyResponse copies all relevant info from rec to rw.
 func copyResponse(rw http.ResponseWriter, rec *httptest.ResponseRecorder) {
+
 	// copy the headers
 	for k, v := range rec.Header() {
 		rw.Header()[k] = v
@@ -58,6 +60,7 @@ func copyResponse(rw http.ResponseWriter, rec *httptest.ResponseRecorder) {
 
 // JSON marshal's the response variable into json and prints it on rw.
 func JSON(rw http.ResponseWriter, response interface{}) {
+
 	encoded, err := json.Marshal(response)
 	if logs.CheckErr(err) {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -69,6 +72,7 @@ func JSON(rw http.ResponseWriter, response interface{}) {
 // GET /crawl
 // Crawls a given url
 func Crawl(rw http.ResponseWriter, req *http.Request) {
+
 	uStr := req.Form.Get("url")
 	if uStr == "" {
 		http.Error(rw, "Missing url parameter", 422)
@@ -81,13 +85,7 @@ func Crawl(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	sitemap, err := crawler.Crawl(u)
-	if logs.CheckErr(err) {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	JSON(rw, sitemap)
+	JSON(rw, crawler.Crawl(u))
 }
 
 func Index(rw http.ResponseWriter, req *http.Request) {
