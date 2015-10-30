@@ -33,7 +33,7 @@ func BeforeAction(h func(http.ResponseWriter, *http.Request), contentType string
 		if contentType != "" {
 			rec.Header().Set("Content-Type", contentType)
 		}
-		
+
 		h(rec, req)
 
 		// log response

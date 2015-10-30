@@ -3,19 +3,19 @@ package crawler
 
 import (
 	"errors"
+	"fmt"
 	"github.com/fueledbymarvin/gocardless/logs"
 	"golang.org/x/net/html"
 	"net/http"
 	"net/url"
-	"fmt"
 	"runtime"
 )
 
 const chunkSize int = 100
 
 type Sitemap struct {
-	Host  string
-	Nodes map[string]*Node
+	Host    string
+	Nodes   map[string]*Node
 	Ordered []string
 }
 
@@ -89,14 +89,14 @@ func Crawl(u *url.URL) []map[string]interface{} {
 		for _, link := range newLinks {
 			urls <- link
 		}
-		
+
 		if outstanding == 0 {
 			close(urls)
 			logs.Log(fmt.Sprintf("Crawled %d urls total", count))
 			break
 		}
 
-		if count % chunkSize == 0 {
+		if count%chunkSize == 0 {
 			logs.Log(fmt.Sprintf("Crawled %d urls so far", count))
 			logs.Log(fmt.Sprintf("%d urls pending", outstanding))
 		}
@@ -179,7 +179,7 @@ func getURL(src *url.URL, token html.Token) (*url.URL, bool) {
 }
 
 func contains(s []string, str string) bool {
-	
+
 	for _, a := range s {
 		if a == str {
 			return true
@@ -191,7 +191,7 @@ func contains(s []string, str string) bool {
 // Convert a sitemap to a graph that is a list of nodes and a list of links.
 // Links are specified using the indices of the nodes list.
 func (this *Sitemap) simplify() []map[string]interface{} {
-	
+
 	nodes := make([]map[string]interface{}, 0, len(this.Nodes))
 	for _, u := range this.Ordered {
 		node := this.Nodes[u]
@@ -210,4 +210,3 @@ func (this *Sitemap) simplify() []map[string]interface{} {
 
 	return nodes
 }
-

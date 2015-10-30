@@ -1,11 +1,11 @@
 package crawler_test
 
 import (
+	"fmt"
 	. "github.com/fueledbymarvin/gocardless/crawler"
+	"github.com/gorilla/mux"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/gorilla/mux"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 )
@@ -76,7 +76,7 @@ var _ = Describe("Crawler", func() {
 				fmt.Fprintln(rw, "<a href=\"/blog\">Blog</a>")
 			})
 			r.HandleFunc("/blog", func(rw http.ResponseWriter, req *http.Request) {
-				fmt.Fprintln(rw, "<a href=\"/blog/yo\">yo</a>" +
+				fmt.Fprintln(rw, "<a href=\"/blog/yo\">yo</a>"+
 					"<a href=\"/blog/sup\">sup</a>")
 			})
 			r.HandleFunc("/blog/yo", func(rw http.ResponseWriter, req *http.Request) {
@@ -91,14 +91,14 @@ var _ = Describe("Crawler", func() {
 
 			expected := make([]map[string]interface{}, 0)
 			expected = append(expected, makeNode(ts.URL, false,
-				ts.URL + "/blog",
+				ts.URL+"/blog",
 			))
-			expected = append(expected, makeNode(ts.URL + "/blog", false,
-				ts.URL + "/blog/yo",
-				ts.URL + "/blog/sup",
+			expected = append(expected, makeNode(ts.URL+"/blog", false,
+				ts.URL+"/blog/yo",
+				ts.URL+"/blog/sup",
 			))
-			expected = append(expected, makeNode(ts.URL + "/blog/yo", false))
-			expected = append(expected, makeNode(ts.URL + "/blog/sup", false))
+			expected = append(expected, makeNode(ts.URL+"/blog/yo", false))
+			expected = append(expected, makeNode(ts.URL+"/blog/sup", false))
 			Expect(sitemap).To(Equal(expected))
 		})
 
@@ -128,9 +128,9 @@ var _ = Describe("Crawler", func() {
 
 			expected := make([]map[string]interface{}, 0)
 			expected = append(expected, makeNode(ts.URL, false,
-				ts.URL + "/whatever.js",
+				ts.URL+"/whatever.js",
 			))
-			expected = append(expected, makeNode(ts.URL + "/whatever.js", false))
+			expected = append(expected, makeNode(ts.URL+"/whatever.js", false))
 			Expect(sitemap).To(Equal(expected))
 		})
 
@@ -144,9 +144,9 @@ var _ = Describe("Crawler", func() {
 
 			expected := make([]map[string]interface{}, 0)
 			expected = append(expected, makeNode(ts.URL, false,
-				ts.URL + "/whatever.css",
+				ts.URL+"/whatever.css",
 			))
-			expected = append(expected, makeNode(ts.URL + "/whatever.css", false))
+			expected = append(expected, makeNode(ts.URL+"/whatever.css", false))
 			Expect(sitemap).To(Equal(expected))
 		})
 
@@ -179,9 +179,9 @@ var _ = Describe("Crawler", func() {
 
 			expected := make([]map[string]interface{}, 0)
 			expected = append(expected, makeNode(ts.URL, false,
-				ts.URL + "/fail",
+				ts.URL+"/fail",
 			))
-			expected = append(expected, makeNode(ts.URL + "/fail", false))
+			expected = append(expected, makeNode(ts.URL+"/fail", false))
 			Expect(sitemap).To(Equal(expected))
 		})
 
@@ -198,9 +198,9 @@ var _ = Describe("Crawler", func() {
 
 			expected := make([]map[string]interface{}, 0)
 			expected = append(expected, makeNode(ts.URL, false,
-				ts.URL + "/blog",
+				ts.URL+"/blog",
 			))
-			expected = append(expected, makeNode(ts.URL + "/blog", false))
+			expected = append(expected, makeNode(ts.URL+"/blog", false))
 			Expect(sitemap).To(Equal(expected))
 		})
 	})
